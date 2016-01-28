@@ -5,12 +5,12 @@ import math
 import numpy as np
 
 #Method for drawing shapes
-def DrawShape(image):
+def DrawShape(image, colour):
 	print image
-
+	
 	#Circle
 	if image.label ==1:
-		shape = plt.Circle((image.x, image.y), radius = 3, fc='y')
+		shape = plt.Circle((image.x, image.y), radius = 3, fc=colour)
 	
 	#Triangle
 	elif image.label == 2:
@@ -35,26 +35,26 @@ def DrawShape(image):
 		for i in range(len(rotatePoints)):
 			rotatePoints[i] = rotatePoints[i]+[x,y]
 
-		shape = plt.Polygon(rotatePoints)
+		shape = plt.Polygon(rotatePoints, fc=colour)
 	
 	#Square
 	elif image.label == 3:
-		shape = plt.Rectangle((image.x, image.y),3*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc='r')
+		shape = plt.Rectangle((image.x, image.y),3*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc=colour)
 	
 	#Rectangle
 	elif image.label == 4:
-		shape = plt.Rectangle((image.x, image.y),9*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc='green')
+		shape = plt.Rectangle((image.x, image.y),9*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc=colour)
 	
 	return shape
 	
 
-def DrawReference(images, imageNum):
+def DrawImage(images, imageNum, colour):
 	plt.axes()
 
 	#Drawing each shape
 	for i in range(imageNum):
-		shape = DrawShape(images[i])
+		shape = DrawShape(images[i], colour)
 		plt.gca().add_patch(shape)
 
-	plt.axis([-10,10,-10,10])
-	plt.show()
+	plt.axis([-20,20,-20,20])
+	return plt
