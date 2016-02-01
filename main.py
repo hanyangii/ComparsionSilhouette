@@ -47,11 +47,6 @@ queryPlt = DrawImage(queryImage, queryNum,'blue')
 referencePlt.show()
 queryPlt.show()
 
-#fig, mainPlot = plt.subplots(1,2,sharex=True,sharey=True)
-#print referencePlt
-#print mainPlot
-#mainPlot[0,1].plt(referencePlt)
-
 #Calcurate Score
 totalScore=Calcurate(referenceImage, queryImage)
 print totalScore

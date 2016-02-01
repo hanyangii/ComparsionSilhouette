@@ -1,25 +1,43 @@
 import numpy as np
 
-def compareDistance(ref, que):
+def EuclidianDistance(ref, que):
 	a = np.array((ref.x, ref.y))
 	b = np.array((que.x, que.y))
 	e = np.linalg.norm(a-b)
 	return e
 
-def Distance(reference, query):
-	totalScore = 0
-
-	for i in range(len(reference)):
-		if i == len(reference)-1: j=0
-		else : j=i+1
-		totalScore+=(compareDistance(reference[i], reference[j])-compareDistance(query[i], query[j]))/compareDistance(reference[i], reference[j])
+def Topology(reference, query):
+	#find topology of 2 images (priority is distance)
 	
-	totalScore*=100
-	print totalScore
-	return totalScore
+	#make distance table of images
+	ref = len(reference)
+	refDist=[[0 for col in range(ref)] for row in range(ref)]
+	
+	for i in range(ref):
+		for j in range(ref):
+			if i == j : refDist[i][j]=0
+			else : refDist[i][j] = EuclidianDistance(reference[i],reference[j])
 
+	que = len(query)
+	queDist = [[0 for col in range(que)] for row in range(que)]
+
+	for i in range(que):
+		for j in range(que):
+			if i == j : queDist[i][j] = 0
+			else : queDist[i][j] = EuclidianDistance(query[i],query[j])
+
+	#make Topology table
+
+	refTop = [[0 for col in range(ref)] for row in range(que)]
+	queTop = [[0 for col in range(ref)] for row in range(que)]
+
+
+
+#Topology, Rotation, Overlap
+#aT(x) + bR(x) + cO(x)
 def Calcurate(reference, query):
-	Score = 0
-	DistanceScore = Distance(reference, query)
+	totalScore = 0
+	topologyScore = Topology(reference, query)
 
-	Score+=DistanceScore
+	
+	totalScore = topologyScore

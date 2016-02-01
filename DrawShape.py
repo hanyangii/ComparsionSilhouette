@@ -39,12 +39,46 @@ def DrawShape(image, colour):
 	
 	#Square
 	elif image.label == 3:
-		shape = plt.Rectangle((image.x, image.y),3*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc=colour)
-	
+		#shape = plt.Rectangle((image.x-(1.5*math.sqrt(2)), image.y-(1.5*math.sqrt(2))),3*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc=colour)
+		x = image.x
+		y = image.y
+
+		points=np.array(([-3, 3, 3, -3],
+						 [-3, -3, 3, 3]))
+		angle = math.radians(image.theta)
+
+		rotationMatrix = np.array(([math.cos(angle), -math.sin(angle)],
+								   [math.sin(angle), math.cos(angle)]))
+
+		points = np.dot(rotationMatrix,points)
+
+		rotatePoints = points.T
+
+		for i in range(len(rotatePoints)):
+			rotatePoints[i] = rotatePoints[i]+[x,y]
+
+		shape = plt.Polygon(rotatePoints, fc=colour)
+
 	#Rectangle
 	elif image.label == 4:
-		shape = plt.Rectangle((image.x, image.y),9*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc=colour)
-	
+		#shape = plt.Rectangle((image.x-(4.5*math.sqrt(2)), image.y-(1.5*math.sqrt(2))),9*math.sqrt(2),3*math.sqrt(2),angle=image.theta,fc=colour)
+		x = image.x
+		y = image.y
+
+		points=np.array(([-9, 9, 9, -9],
+						 [-3, -3, 3, 3]))
+		angle = math.radians(image.theta)
+
+		rotationMatrix =np.array(([math.cos(angle), -math.sin(angle)],
+								  [math.sin(angle), math.cos(angle)]))
+		points = np.dot(rotationMatrix, points)
+
+		rotatePoints = points.T
+
+		for i in  range(len(rotatePoints)):
+			rotatePoints[i]=rotatePoints[i]+[x,y]
+
+		shape = plt.Polygon(rotatePoints, fc=colour)
 	return shape
 	
 
