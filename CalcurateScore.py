@@ -1,8 +1,8 @@
 import numpy as np
+import math
 import Queue as Q
 
-# use Kruskal's algorithm for making topology
-# use Priority queue for kruskal's algorithm
+# use fully connected topology
 
 def EuclidianDistance(ref, que):
 	a = np.array((ref.x, ref.y))
@@ -13,65 +13,56 @@ def EuclidianDistance(ref, que):
 def Topology(reference, query):
 	#find topology of 2 images (priority is distance)
 	
-	#make referernce image Priority queue
-	refQ =  Q.PriorityQueue()
-	
 	ref = len(reference)	
-	for i in range(ref):
-		for j in range(i):
-			dist = EuclidianDistance(reference[i],reference[j])
-			refQ.put((dist, [i, j])) #(distance, [shape #, shape#])
-	
-	#use check list to prevent from making cycle
-	check = [0 for i in range(ref)]
-	n=0
-	refTop = [[0 for col in range(ref)] for row in range(ref)]
-	
-	#make Topology table from reference Priority queue
-	while n<ref-1:
-		tmp = refQ.get()
-		x = tmp[1][0]
-		y = tmp[1][1]
-		if check[x]==1 and check[y]==1 : continue
-		else:
-			refTop[x][y] = tmp[0]
-			refTop[y][x] = tmp[0]
-			check[x]=1
-			check[y]=1
-			n+=1
-	
-	#make query image Priority queue
-	queQ =  Q.PriorityQueue()
-
 	que = len(query)
-	for i in range(que):
-		for j in range(i):
-			dist = EuclidianDistance(query[i], query[j])
-			queQ.put((dist, [i,j]))
-	
-	#use check list to prevent from making cycle
-	check = [0 for i in range(que)]
-	n=0
+	refTop = [[0 for col in range(ref)] for row in range(ref)]
 	queTop = [[0 for col in range(que)] for row in range(que)]
 
-	#make Topology table from query Priority queue
-	while n<que-1:
-		tmp = queQ.get()
-		x=tmp[1][0]
-		y=tmp[1][1]
-		if check[x]==1 and check[y]==1 : continue
-		else :
-			queTop[x][y]=tmp[0]
-			queTop[y][x]=tmp[0]
-			check[x]=1
-			check[y]=1
-			n+=1
+	for i in range(ref):
+		for j in range(i):
+			refDist = EuclidianDistance(reference[i],reference[j])
+			refTop[i][j]=refDist
+			refTop[j][i]=refDist
+			queDist = EuclidianDistance(query[i], query[j])
+			queTop[i][j]=queDist
+			queTop[j][i]=queDist
+
+def CosSimilarity(a,b):
+	return  (np.dot(a, b)/(np.linalg.norm(a)*np.linalg.norm(b)))
+
+#Need pair matching!!!!!!!!
+#Compare vectors of each shapes by consine similarity
+def Rotation(reference, query):
+	totalScore = 0.0
+
+	#Calcurate modulo operator
+	circleNum = 0
+	for i in range(len(reference)):
+		if reference[i].label == 1 : 
+			circleNum+=1
+			continue
+		elif reference[i].label==2:
+			reference[i].theta = reference[i].theta%120
+			query[i].theta = query[i].theta%120
+		elif reference[i].label == 3:
+			reference[i].theta = reference[i].theta%90
+			query[i].theta = query[i].theta%90
+		elif reference[i].label==4:
+			reference[i].theta = reference[i].theta%180
+			query[i].theta = query[i].theta%180
+		
+		# make vector of theta
+		a = np.array((math.cos(reference[i].theta), math.sin(reference[i].theta)))
+		b = np.array((math.cos(query[i].theta), math.sin(query[i].theta)))
+		totalScore += (CosSimilarity(a,b)+1)/2
+	
+	return totalScore*100.0/(len(reference)-circleNum)
 
 #Topology, Rotation, Overlap
 #aT(x) + bR(x) + cO(x)
 def Calcurate(reference, query):
 	totalScore = 0
 	topologyScore = Topology(reference, query)
-
-	
+	rotationScore = Rotation(reference, query)
+	print rotationScore
 	totalScore = topologyScore
