@@ -34,6 +34,17 @@ def Topology(reference, query):
 	
 	ref = len(reference)	
 	que = len(query)
+	refTop = [[0 for col in range(ref)] for row in range(ref)]
+	queTop = [[0 for col in range(que)] for row in range(que)]
+
+	for i in range(ref):
+		for j in range(i):
+			refDist = EuclidianDistance(reference[i],reference[j])
+			refTop[i][j]=refDist
+			refTop[j][i]=refDist
+			queDist = EuclidianDistance(query[i], query[j])
+			queTop[i][j]=queDist
+			queTop[j][i]=queDist
 
 	refCentre = Centre(reference)
 	queCentre = Centre(query)
@@ -58,6 +69,8 @@ def Topology(reference, query):
 		totalScore+=(CosSimilarity(refAng[i],queAng[i])+1)/2
 
 	return totalScore*100.0/(len(reference))
+
+	#Compare 2 angle matrices
 
 
 #Need pair matching!!!!!!!!
@@ -90,23 +103,6 @@ def Rotation(reference, query):
 
 def Distance(reference, query):
 	
-	ref = len(reference)	
-	que = len(query)
-	refDist = [[0 for col in range(ref)] for row in range(ref)]
-	queDist = [[0 for col in range(que)] for row in range(que)]
-	totalScore = 0
-	totalConnect = ref*(ref-1)/2
-
-	for i in range(ref):
-		for j in range(i):
-			r_d = EuclidianDistance(reference[i],reference[j])
-			q_d = EuclidianDistance(query[i], query[j])
-			t = q_d/r_d
-			if t>1 : t=r_d/q_d
-			totalScore+=100.0*t/totalConnect
-
-	return totalScore
-
 
 
 #Topology, Rotation, Scale
@@ -118,7 +114,4 @@ def Calcurate(reference, query):
 	distanceScore = Distance(reference, query)
 	print topologyScore 
 	print rotationScore
-	print distanceScore
-	totalScore = topologyScore+rotationScore+distanceScore
-
-	return totalScore
+	totalScore = topologyScore
